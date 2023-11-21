@@ -321,6 +321,11 @@
       "packageName": "blog",
       "projectFolder": "apps/blog"
     },
+    {
+      "packageName": "acqos",
+      "projectFolder": "utils/request",
+      "tags": ["tools"]
+    }
     // {
     //   /**
     //    * The NPM package name of the project (must match package.json)
