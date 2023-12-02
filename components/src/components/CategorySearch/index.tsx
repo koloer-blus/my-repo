@@ -7,10 +7,10 @@ import { DropInput } from './drop-input';
 import { DropDatePicker } from './drop-date-picker';
 
 export const CategorySearch = (props: ICategorySearchProps) => {
-  const { data = [], onChange, value, ...resetInputTagProps } = props;
+  const { data = [], onChange, initValue = {}, ...resetInputTagProps } = props;
 
   const [fieldCacheKey, setFieldCacheKey] = useState<string | undefined>();
-  const [searchMap, setSearchMap] = useState<ICategorySearchMapValue>({});
+  const [searchMap, setSearchMap] = useState<ICategorySearchMapValue>(initValue);
   const [tagValues, setTagValues] = useState<
     {
       label: string;
@@ -75,46 +75,36 @@ export const CategorySearch = (props: ICategorySearchProps) => {
   );
 
   const updateSearchMap = useCallback(
-    (field: string, value?: string | string[]) => {
-      let mergedValue = searchMap;
-      if (_.isArray(value)) {
-        mergedValue = {
-          ...mergedValue,
-          [field]: [...((searchMap[field] as string[]) || []), ...(value as string[])]
-        };
-      } else {
-        mergedValue = {
-          ...mergedValue,
-          [field]: value
-        };
-      }
+    (field: string, value?: string | string[], noClear: boolean = true) => {
+      const mergedValue = {
+        ...searchMap,
+        [field]: value
+      };
       setSearchMap(mergedValue);
       const tagIndex = getFieldTagKeyIndex(field);
       const tempTagValues = [...tagValues];
-      if (mergedValue[field].length) {
+      if (mergedValue[field]?.length) {
         const currentFieldData = getCurrentFieldData(field);
-        const valueLabels = currentFieldData?.options?.length
+
+        const labels = currentFieldData?.options?.length
           ? currentFieldData.options
               .reduce((p, c) => {
-                if (_.isArray(mergedValue[field])) {
-                  if (mergedValue[field].includes(c.value)) {
-                    p = [...p, c.label];
-                  }
-                } else {
-                  if (mergedValue[field] === c.value) {
-                    p = [c.label];
-                  }
+                if (_.isArray(value) && value?.includes(c.value)) {
+                  p = [...p, c.label];
+                } else if (c.value === value && _.isString(value)) {
+                  p = [c.label];
                 }
                 return p;
               }, [])
               .join('|')
-          : _.isArray(mergedValue[field])
-          ? mergedValue[field].join('-')
-          : mergedValue[field];
+          : _.isArray(value)
+          ? value.join('-')
+          : value;
+
         tempTagValues[tagIndex] = {
-          label: `${tempTagValues[tagIndex].label}:${valueLabels}`,
+          label: `${currentFieldData.label}:${labels}`,
           value: {
-            value: mergedValue,
+            value: value,
             field: field
           }
         };
@@ -122,8 +112,14 @@ export const CategorySearch = (props: ICategorySearchProps) => {
         tempTagValues.splice(tagIndex, 1);
       }
       setTagValues(tempTagValues);
+      if (onChange) {
+        onChange(mergedValue);
+      }
+      if (noClear) {
+        setFieldCacheKey(undefined);
+      }
     },
-    [searchMap, getFieldTagKeyIndex, tagValues, getCurrentFieldData]
+    [searchMap, getFieldTagKeyIndex, tagValues, onChange, getCurrentFieldData]
   );
 
   const currentFieldData = useMemo(() => {
@@ -157,7 +153,13 @@ export const CategorySearch = (props: ICategorySearchProps) => {
     }
     if (currentFieldData?.options?.length) {
       const checkBoxMode = currentFilterType === 'CheckBox';
-      return <DropOptions mode={checkBoxMode ? 'checkbox' : 'selectItem'} {...baseDropComponentProps} />;
+      return (
+        <DropOptions
+          mode={checkBoxMode ? 'checkbox' : 'selectItem'}
+          {...baseDropComponentProps}
+          options={currentFieldData.options}
+        />
+      );
     }
     return null;
   }, [currentFieldData, updateSearchMap, searchMap]);
@@ -169,6 +171,10 @@ export const CategorySearch = (props: ICategorySearchProps) => {
         value={tagValues}
         onBlur={() => clearFieldCacheKey()}
         onClear={() => clearFieldCacheKey()}
+        onRemove={(v, _index, e) => {
+          updateSearchMap(v.value.field);
+          e.stopPropagation();
+        }}
       />
     </Dropdown>
   );

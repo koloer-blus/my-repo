@@ -21,7 +21,7 @@ export interface ICategorySearchProps {
     data: ICateggorySearchDataItem[];
     style?: CSSProperties;
     className?: string;
-    value?: ICategorySearchMapValue;
+    initValue?: ICategorySearchMapValue;
     onChange?: (value: ICategorySearchMapValue) => void;
 }
 
