@@ -1,5 +1,5 @@
 import "@arco-design/web-react/dist/css/arco.css";
-import { CustomSearch } from './components'
+import { CategorySearch } from './components'
 import { Space } from "@arco-design/web-react";
 import { CustomSelectMock } from "./mock";
 
@@ -9,7 +9,11 @@ function App() {
     <Space style={{
       padding: 20
     }} direction="vertical">
-      <CustomSearch data={CustomSelectMock} />
+      <CategorySearch
+          data={CustomSelectMock}
+        style={{
+        width: 600
+      }} />
     </Space>
   )
 }

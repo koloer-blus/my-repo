@@ -1,121 +1,116 @@
-import { ICategorySearchTagItem } from "../components/custom-search/types";
+import { ICategorySearchProps } from '../components/CategorySearch/types.ts'
 
-export const CustomSelectMock: ICategorySearchTagItem[] = [{
-    label: '组织城市',
-    field: 'city',
-    type: 'Cascader',
-    options: [
-        {
-            value: 'beijing',
-            label: 'Beijing',
-            children: [
-                {
-                    value: 'Beijing',
-                    label: 'Beijing',
-                    children: [
-                        {
-                            value: 'chaoyang',
-                            label: 'Chaoyang',
-                            children: [
-                                {
-                                    value: 'datunli',
-                                    label: 'Datunli',
-                                },
-                            ],
-                        },
-                    ],
-                },
-            ],
-        },
-        {
-            value: 'shanghai',
-            label: 'Shanghai',
-            children: [
-                {
-                    value: 'shanghaishi',
-                    label: 'Shanghai',
-                    children: [
-                        {
-                            value: 'huangpu',
-                            label: 'Huangpu',
-                        },
-                    ],
-                },
-            ],
-        },
-    ]
-}, {
-    label: '组名',
-    field: 'group',
-    type: 'Select',
-    options: [
-        {
-            label: 'group1',
-            value: 'group1'
-        },
-        {
-            label: 'group2',
-            value: 'group2'
-        }
-    ]
-}, {
-    label: '文件',
-    field: 'file',
-    type: 'Input',
-}, {
-    label: '文件类型',
-    field: 'fileType',
-    type: 'Radio',
-    options: [
-        [
-            {
-                label: 'A',
-                value: 'a',
-            },
-            {
-                label: 'B',
-                value: 'b',
-            },
-            {
-                label: 'C',
-                value: 'c',
-            },
-            {
-                label: 'D',
-                value: 'd',
-                disabled: true,
-            },
-        ]
-    ]
-}, {
-    label: '文件 Tag',
-    field: 'fileTag',
-    type: 'CheckBox',
-    options: [
-        {
-            label: 'Option 1',
-            value: '1',
-        },
-        {
-            label: 'Option 2',
-            value: '2',
+/**
+* 以番剧搜索为例
+*/
+export const CustomSelectMock: ICategorySearchProps['data'] = [
+   {
+       field: 'area',
+       label: '地区',
+       filterType: 'Select',
+       options: [
+          {
+             label: '日本',
+             value: 'Japan'
+          },
+          {
+             label: '中国',
+             value: 'China',
+          },
+          {
+             label: '欧美',
+             value: 'Europe&America'
+          }
+       ]
+   },
+   {
+      field: 'type',
+      label: '类型',
+      filterType: 'CheckBox',
+      options: [
+         {
+            label: '搞笑',
+            value: 'funny'
+         },
+         {
+            label: '励志',
+            value: 'inspirational'
+         },
+         {
+            label: '战斗',
+            value: 'fighting'
+         },
+         {
+            label: '🈲18',
+            value: '18_prohibited',
             disabled: true,
-        },
-        {
-            label: 'Option 3',
-            value: '3',
-        },
-        {
-            label: 'Option 4',
-            value: '4',
-        },
-    ]
-}, {
-    label: '创建日期',
-    field: 'date',
-    type: 'DatePiacker',
-}, {
-    label: '最后更新时间',
-    field: 'time',
-    type: 'TimePicker'
-}]
+         },
+         {
+            label: '校园',
+            value: 'campus'
+         },
+         {
+            label: '爱情',
+            value: 'love'
+         },
+         {
+            label: '冒险',
+            value: 'adventure'
+         }
+      ]
+   },
+   {
+      field: 'status',
+      label: '状态',
+      filterType: 'Radio',
+      options: [
+         {
+            label: '已完结',
+            value: 'closed',
+         },
+         {
+            label: '本月新番',
+            value: 'latest'
+         },
+         {
+            label: '长期连载',
+            value: 'forver'
+         },
+      ]
+   },
+   {
+      field: 'version',
+      label: '版本类型',
+      filterType: 'Select',
+      options: [
+         {
+            label: 'TV',
+            value: 'TV'
+         },
+         {
+            label: '剧场版',
+            value: 'movie'
+         },
+         {
+            label: 'OVA',
+            value: 'OVA',
+            disabled: true,
+         }
+      ]
+   },
+   {
+      field: 'duration',
+      label: '更新时间',
+      filterType: 'DateRangerPicker',
+   },
+   {
+      field: 'create',
+      label: '创建时间',
+      filterType: 'DatePicker'
+   },
+   {
+      field: 'keyword',
+      label: '关键词',
+      filterType: 'Input'
+   }
+]

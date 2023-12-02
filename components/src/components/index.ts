@@ -1,1 +1,1 @@
-export { CustomSearch } from './custom-search'
+export { CategorySearch } from './CategorySearch'
