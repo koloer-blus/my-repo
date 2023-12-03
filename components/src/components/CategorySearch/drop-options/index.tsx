@@ -1,5 +1,5 @@
 import { IBaseDropComponentProps, ICateggorySearchDataItem } from '../types.ts';
-import { Menu, Checkbox, Button } from '@arco-design/web-react';
+import { Menu, Checkbox } from '@arco-design/web-react';
 import * as S from './styles.ts';
 
 const CheckboxGroup = Checkbox.Group;

@@ -1,34 +1,43 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import '@arco-design/web-react/dist/css/arco.css';
+import { CategorySearch } from 'repo-components';
+import { Space } from '@arco-design/web-react';
+import { CustomSelectMock } from './mock';
+import { useState } from 'react';
+import JSONPretty from 'react-json-pretty';
+import { ICategorySearchMapValue } from './components/CategorySearch/types';
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [value, setValues] = useState<ICategorySearchMapValue>({});
 
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <div>
+      <h2>分类搜索组件</h2>
+      <Space
+        style={{
+          padding: 20
+        }}
+        align="start"
+      >
+        <CategorySearch
+          data={CustomSelectMock}
+          style={{
+            width: 600
+          }}
+          initValue={value}
+          onChange={(v) => setValues(v)}
+        />
+        <JSONPretty
+          style={{
+            border: '1px solid blue',
+            width: 400,
+            minHeight: 800
+          }}
+          id="json-pretty"
+          data={value}
+        ></JSONPretty>
+      </Space>
+    </div>
+  );
 }
 
-export default App
+export default App;

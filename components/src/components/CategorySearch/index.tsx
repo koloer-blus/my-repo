@@ -5,6 +5,7 @@ import { DropOptions } from './drop-options';
 import _ from 'lodash-es';
 import { DropInput } from './drop-input';
 import { DropDatePicker } from './drop-date-picker';
+import { IBaseDropComponentProps } from './types';
 
 export const CategorySearch = (props: ICategorySearchProps) => {
   const { data = [], onChange, initValue = {}, ...resetInputTagProps } = props;
@@ -51,8 +52,8 @@ export const CategorySearch = (props: ICategorySearchProps) => {
     () => (
       <DropOptions
         onChange={(v) => {
-          const tagValueIndex = getFieldTagKeyIndex(v);
-          const fieldData = getCurrentFieldData(v);
+          const tagValueIndex = getFieldTagKeyIndex(v as string);
+          const fieldData = getCurrentFieldData(v as string);
           if (tagValueIndex < 0 && fieldData) {
             const tempTagValues = [
               ...tagValues,
@@ -90,19 +91,19 @@ export const CategorySearch = (props: ICategorySearchProps) => {
           ? currentFieldData.options
               .reduce((p, c) => {
                 if (_.isArray(value) && value?.includes(c.value)) {
-                  p = [...p, c.label];
+                  p = [...p, c.label as string];
                 } else if (c.value === value && _.isString(value)) {
-                  p = [c.label];
+                  p = [c.label as string];
                 }
                 return p;
-              }, [])
+              }, [] as string[])
               .join('|')
           : _.isArray(value)
           ? value.join('-')
           : value;
 
         tempTagValues[tagIndex] = {
-          label: `${currentFieldData.label}:${labels}`,
+          label: `${currentFieldData?.label as string}:${labels}`,
           value: {
             value: value,
             field: field
@@ -135,7 +136,7 @@ export const CategorySearch = (props: ICategorySearchProps) => {
     const currentFilterType = currentFieldData.filterType;
     const value = searchMap?.[currentField];
 
-    const baseDropComponentProps = {
+    const baseDropComponentProps: IBaseDropComponentProps = {
       value: value,
       onChange: (v) => updateSearchMap(currentField, v as string)
     };

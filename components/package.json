@@ -1,8 +1,17 @@
 {
   "name": "repo-components",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.0.1",
   "type": "module",
+  "main": "./dist/repo-components.umd.cjs",
+  "module": "./dist/repo-components.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/repo-components.js",
+      "require": "./dist/repo-components.umd.cjs"
+    }
+  },
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
@@ -10,13 +19,14 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
     "styled-components": "~6.1.1",
     "lodash-es": "~4.17.21",
+    "@arco-design/web-react": "~2.56.1",
     "react-json-pretty": "~2.2.0"
   },
   "devDependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
     "@types/react": "^18.2.37",
     "@types/react-dom": "^18.2.15",
     "@typescript-eslint/eslint-plugin": "^6.10.0",
@@ -27,6 +37,7 @@
     "eslint-plugin-react-refresh": "^0.4.4",
     "typescript": "^5.2.2",
     "vite": "^5.0.0",
-    "@arco-design/web-react": "~2.56.1"
+    "@types/lodash-es": "~4.17.12",
+    "vite-plugin-dts": "~3.6.4"
   }
 }
