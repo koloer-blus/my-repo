@@ -46,10 +46,14 @@ jobs:
         run: cd ./components && rushx build
       - name: reset path
         run: cd ../
+      - name: show path
+        run: ls
       - name: Build Blog
         run: cd ./apps/blog && rushx build
       - name: reset root path
         run: cd ../../
+      - name: show path
+        run: ls ./apps/blog/dist
       - name: Setup Pages
         uses: actions/configure-pages@v3
       - name: Upload artifact
