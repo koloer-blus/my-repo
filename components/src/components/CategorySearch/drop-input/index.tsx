@@ -9,7 +9,6 @@ export const DropInput = (props: IDropInputProps) => {
   return (
     <Input
       value={value as string}
-      onChange={(v) => onChange(v)}
       onPressEnter={(e) => onChange(e.target.value)}
     />
   );
