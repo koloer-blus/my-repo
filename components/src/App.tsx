@@ -1,5 +1,5 @@
 import '@arco-design/web-react/dist/css/arco.css';
-import { CategorySearch } from './components';
+import { CategorySearch, CategoryInput } from './components';
 import { Space } from '@arco-design/web-react';
 import { CustomSelectMock } from './mock';
 import { useState } from 'react';
@@ -11,11 +11,20 @@ function App() {
 
   return (
     <Space
+      direction="vertical"
       style={{
         padding: 20
       }}
       align="start"
     >
+      <JSONPretty
+        style={{
+          border: '1px solid blue',
+          width: 400,
+        }}
+        id="json-pretty"
+        data={value}
+      ></JSONPretty>
       <CategorySearch
         data={CustomSelectMock}
         style={{
@@ -24,15 +33,11 @@ function App() {
         initValue={value}
         onChange={(v) => setValues(v)}
       />
-      <JSONPretty
+      <CategoryInput
         style={{
-          border: '1px solid blue',
-          width: 400,
-          minHeight: 800
+          width: 600
         }}
-        id="json-pretty"
-        data={value}
-      ></JSONPretty>
+      />
     </Space>
   );
 }
