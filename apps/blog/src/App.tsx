@@ -1,5 +1,5 @@
 import '@arco-design/web-react/dist/css/arco.css';
-import { CategorySearch } from 'repo-components';
+import { CategorySearch, CategoryInput } from 'repo-components';
 import { Space } from '@arco-design/web-react';
 import { CustomSelectMock } from './mock';
 import { useState } from 'react';
@@ -36,6 +36,8 @@ function App() {
           data={value}
         ></JSONPretty>
       </Space>
+      <h2>InputTag 改良版</h2>
+      <CategoryInput />
     </div>
   );
 }

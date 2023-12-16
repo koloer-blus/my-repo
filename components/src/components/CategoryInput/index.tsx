@@ -1,7 +1,7 @@
 import { ICategoryInputProps } from './types';
 import * as S from './styles';
 import { useRef, useState } from 'react';
-import { Dropdown, Message, Space, Tag } from '@arco-design/web-react';
+import { Message, Space, Tag } from '@arco-design/web-react';
 
 export const CategoryInput = (props: ICategoryInputProps) => {
   const { style, className } = props;
@@ -9,8 +9,8 @@ export const CategoryInput = (props: ICategoryInputProps) => {
   const [tagList, setTagList] = useState<string[]>([]);
   const wrapperRef = useRef<HTMLDivElement | null>(null);
   const tagWrapperRef = useRef<HTMLDivElement | null>(null);
-  const inputRef = useRef(null);
-  const [position, setPosition] = useState<number | undefined>();
+  const inputRef = useRef<HTMLDListElement | null>(null);
+  const [_position, setPosition] = useState<number | undefined>();
   const [isEdit, setIsEdit] = useState('');
 
   const getPositionX = (type: 'edit' | 'add', key?: string) => {
@@ -90,7 +90,7 @@ export const CategoryInput = (props: ICategoryInputProps) => {
         })}
         {!isEdit && (
           <S.CategoryInput
-            ref={inputRef}
+            ref={inputRef as any}
             onFocus={() => {
               getPositionX('add');
             }}
