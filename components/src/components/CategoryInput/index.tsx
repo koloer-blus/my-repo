@@ -59,7 +59,7 @@ export const CategoryInput = (props: ICategoryInputProps) => {
             return (
               <S.CategoryInput
                 key={item}
-                style={{ border: '1px solid red' }}
+                style={{ border: '1px solid red', padding: 2 }}
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
                 onKeyDown={(evenv) => {

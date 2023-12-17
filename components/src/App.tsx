@@ -20,7 +20,7 @@ function App() {
       <JSONPretty
         style={{
           border: '1px solid blue',
-          width: 400,
+          width: 400
         }}
         id="json-pretty"
         data={value}
