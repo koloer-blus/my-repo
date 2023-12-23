@@ -22,7 +22,8 @@
     "styled-components": "~6.1.1",
     "lodash-es": "~4.17.21",
     "@arco-design/web-react": "~2.56.1",
-    "react-json-pretty": "~2.2.0"
+    "react-json-pretty": "~2.2.0",
+    "rc-util": "~5.38.1"
   },
   "devDependencies": {
     "react": "^18.2.0",

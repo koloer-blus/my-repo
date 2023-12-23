@@ -1,0 +1,19 @@
+.wrapper {
+  background-color: #fff;
+  .arco-input {
+    border: 0;
+    font-size: 12px;
+    background-color: transparent;
+    padding-left: 0;
+    padding-right: 0;
+  }
+}
+
+.drop-wrapper {
+  background-color: #fff;
+  box-shadow: 1px 2px 8px 0 #cccccc8f;
+}
+
+.label {
+  font-size: 12px;
+}

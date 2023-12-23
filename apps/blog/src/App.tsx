@@ -4,6 +4,7 @@ import { Space } from '@arco-design/web-react';
 import { CustomSelectMock } from './mock';
 import { useState } from 'react';
 import JSONPretty from 'react-json-pretty';
+import './style.css';
 import { ICategorySearchMapValue } from './components/CategorySearch/types';
 
 function App() {
@@ -24,7 +25,7 @@ function App() {
             width: 600
           }}
           initValue={value}
-          onChange={(v) => setValues(v)}
+          onChange={(_, v) => setValues(v)}
         />
         <JSONPretty
           style={{
@@ -36,8 +37,6 @@ function App() {
           data={value}
         ></JSONPretty>
       </Space>
-      <h2>InputTag 改良版</h2>
-      <CategoryInput />
     </div>
   );
 }

@@ -7,7 +7,7 @@ export const CustomSelectMock: ICategorySearchProps['data'] = [
   {
     field: 'area',
     label: '地区',
-    filterType: 'Select',
+    fieldComponentType: 'Select',
     options: [
       {
         label: '日本',
@@ -26,7 +26,7 @@ export const CustomSelectMock: ICategorySearchProps['data'] = [
   {
     field: 'type',
     label: '类型',
-    filterType: 'CheckBox',
+    fieldComponentType: 'Checkbox',
     options: [
       {
         label: '搞笑',
@@ -62,7 +62,7 @@ export const CustomSelectMock: ICategorySearchProps['data'] = [
   {
     field: 'status',
     label: '状态',
-    filterType: 'Radio',
+    fieldComponentType: 'Radio',
     options: [
       {
         label: '已完结',
@@ -81,7 +81,7 @@ export const CustomSelectMock: ICategorySearchProps['data'] = [
   {
     field: 'version',
     label: '版本类型',
-    filterType: 'Select',
+    fieldComponentType: 'Select',
     options: [
       {
         label: 'TV',
@@ -101,16 +101,16 @@ export const CustomSelectMock: ICategorySearchProps['data'] = [
   {
     field: 'duration',
     label: '更新时间',
-    filterType: 'DateRangerPicker'
+    fieldComponentType: 'DateRangerPicker'
   },
   {
     field: 'create',
     label: '创建时间',
-    filterType: 'DatePicker'
+    fieldComponentType: 'DatePicker'
   },
   {
     field: 'keyword',
     label: '关键词',
-    filterType: 'Input'
+    fieldComponentType: 'Input'
   }
 ];

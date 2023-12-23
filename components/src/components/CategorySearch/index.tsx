@@ -1,182 +1,255 @@
-import { Dropdown, InputTag } from '@arco-design/web-react';
-import { ICategorySearchMapValue, ICategorySearchProps } from './types.ts';
-import { useCallback, useMemo, useState } from 'react';
-import { DropOptions } from './drop-options';
+import { Dropdown, Input, Space } from '@arco-design/web-react';
+import { ICategorySearchProps, TCategoryValue } from './types';
+import { useMemo, useState } from 'react';
 import _ from 'lodash-es';
-import { DropInput } from './drop-input';
-import { DropDatePicker } from './drop-date-picker';
-import { IBaseDropComponentProps } from './types';
+import './styles.css';
+import { FieldDropPannel, renderFieldDataDropPannel, renderTags } from './components';
+import { getCurrentFieldEditText, getExistsCurrentFieldInValue, getSearchPlaceholder } from './utils';
+import { IconCloseCircle } from '@arco-design/web-react/icon';
 
 export const CategorySearch = (props: ICategorySearchProps) => {
-  const { data = [], onChange, initValue = {}, ...resetInputTagProps } = props;
+  const { data, value, onChange, className = '', style = {}, dropClassName = '' } = props;
 
-  const [fieldCacheKey, setFieldCacheKey] = useState<string | undefined>();
-  const [searchMap, setSearchMap] = useState<ICategorySearchMapValue>(initValue);
-  const [tagValues, setTagValues] = useState<
-    {
-      label: string;
-      value: {
-        field: string;
-        value?: string[] | string;
-      };
-    }[]
-  >([]);
+  const [categoryValue, setCategoryValue] = useState<TCategoryValue>(value || []);
+  const [inputValue, setInputValue] = useState<string>();
+  const [searchValue, setSearchValue] = useState<string>();
+  const [cacheField, setCacheField] = useState<string>();
 
-  const fieldOptions = useMemo(
-    () =>
-      data.map((item) => ({
-        label: item.label,
-        value: item.field
-      })),
-    [data]
-  );
+  const updateFieldValue = (value: unknown, values: TCategoryValue) => {
+    setCategoryValue(values);
+    const valueMap = values.reduce((p, c) => {
+      p[c.field] = c.value;
+      return p;
+    }, {} as Record<string, unknown>);
+    onChange?.(
+      {
+        [cacheField!]: value
+      },
+      values,
+      valueMap
+    );
+    setCacheField(undefined);
+    setSearchValue(undefined);
+    setInputValue(undefined);
+  };
 
-  const clearFieldCacheKey = () => setFieldCacheKey(undefined);
+  const removeTag = (field: string) => {
+    const tempValue = categoryValue.filter((item) => item.field !== field);
+    updateFieldValue(
+      {
+        [field]: undefined
+      },
+      tempValue
+    );
+  };
 
-  const getFieldTagKeyIndex = useCallback(
-    (fieldKey: string) => tagValues.findIndex((item) => item.value.field === fieldKey),
-    [tagValues]
-  );
-
-  const getCurrentFieldData = useCallback(
-    (field: string) => {
-      if (field) {
-        return data.find((item) => item.field === field);
+  const changeFieldValue = (value?: unknown) => {
+    if (!cacheField) return categoryValue;
+    // 清理
+    if (_.isEmpty(value)) {
+      const tempValue = categoryValue.filter((item) => item.field !== cacheField);
+      updateFieldValue(value, tempValue);
+      return tempValue;
+    }
+    const isExist = getExistsCurrentFieldInValue(cacheField, categoryValue);
+    if (isExist) {
+      const tempValue = categoryValue.map((item) => {
+        if (item.field === cacheField) {
+          return {
+            field: item.field,
+            value
+          };
+        }
+        return item;
+      });
+      updateFieldValue(value, tempValue);
+      return tempValue;
+    }
+    const tempValue = [
+      ...categoryValue,
+      {
+        field: cacheField,
+        value
       }
-      return null;
-    },
-    [data]
-  );
+    ];
+    updateFieldValue(value, tempValue);
+    return tempValue;
+  };
 
-  const FieldOptions = useMemo(
+  const FieldDropEl = useMemo(
     () => (
-      <DropOptions
-        onChange={(v) => {
-          const tagValueIndex = getFieldTagKeyIndex(v as string);
-          const fieldData = getCurrentFieldData(v as string);
-          if (tagValueIndex < 0 && fieldData) {
-            const tempTagValues = [
-              ...tagValues,
-              {
-                label: fieldData.label,
-                value: {
-                  field: fieldData.field
-                }
-              }
-            ];
-            setTagValues(tempTagValues);
-          }
-          setFieldCacheKey(v as string);
+      <FieldDropPannel
+        data={data}
+        searchValue={searchValue}
+        updateCacheField={(v) => {
+          setCacheField(v);
         }}
-        mode={'selectItem'}
-        options={fieldOptions}
       />
     ),
-    [fieldOptions, getFieldTagKeyIndex, getCurrentFieldData, tagValues]
+    [data, searchValue, setCacheField]
   );
 
-  const updateSearchMap = useCallback(
-    (field: string, value?: string | string[], noClear: boolean = true) => {
-      const mergedValue = {
-        ...searchMap,
-        [field]: value
-      };
-      setSearchMap(mergedValue);
-      const tagIndex = getFieldTagKeyIndex(field);
-      const tempTagValues = [...tagValues];
-      if (mergedValue[field]?.length) {
-        const currentFieldData = getCurrentFieldData(field);
+  const currentFieldData = useMemo(() => data?.find((item) => item.field === cacheField), [data, cacheField]);
 
-        const labels = currentFieldData?.options?.length
-          ? currentFieldData.options
-              .reduce((p, c) => {
-                if (_.isArray(value) && value?.includes(c.value)) {
-                  p = [...p, c.label as string];
-                } else if (c.value === value && _.isString(value)) {
-                  p = [c.label as string];
-                }
-                return p;
-              }, [] as string[])
-              .join('|')
-          : _.isArray(value)
-          ? value.join('-')
-          : value;
-
-        tempTagValues[tagIndex] = {
-          label: `${currentFieldData?.label as string}:${labels}`,
-          value: {
-            value: value,
-            field: field
-          }
-        };
-      } else {
-        tempTagValues.splice(tagIndex, 1);
-      }
-      setTagValues(tempTagValues);
-      if (onChange) {
-        onChange(mergedValue);
-      }
-      if (noClear) {
-        setFieldCacheKey(undefined);
-      }
-    },
-    [searchMap, getFieldTagKeyIndex, tagValues, onChange, getCurrentFieldData]
+  const CurrentFieldPannel = useMemo(
+    () =>
+      renderFieldDataDropPannel({
+        fieldData: currentFieldData,
+        value: categoryValue,
+        changeFieldValue
+      }),
+    [currentFieldData, categoryValue, changeFieldValue]
   );
 
-  const currentFieldData = useMemo(() => {
-    if (fieldCacheKey) {
-      return data.find((item) => item.field === fieldCacheKey);
+  const dropList = useMemo(() => {
+    if (!cacheField) {
+      return <div className="drop-wrapper">{FieldDropEl}</div>;
+    }
+    if (CurrentFieldPannel) {
+      return <div className="drop-wrapper">{CurrentFieldPannel}</div>;
     }
     return null;
-  }, [data, fieldCacheKey]);
+  }, [cacheField, CurrentFieldPannel, FieldDropEl]);
 
-  const CurrentFieldPanel = useMemo(() => {
-    if (!currentFieldData) return null;
-    const currentField = currentFieldData.field;
-    const currentFilterType = currentFieldData.filterType;
-    const value = searchMap?.[currentField];
+  const fieldSearchInput = (
+    <Input
+      className={'custom-input'}
+      placeholder={getSearchPlaceholder(currentFieldData)}
+      autoWidth
+      onKeyDown={(e) => {
+        if (e.code === 'Backspace' && !searchValue) {
+          const lastestField = categoryValue[categoryValue.length - 1].field;
+          removeTag(lastestField);
+        }
+      }}
+      disabled={!!cacheField}
+      value={searchValue}
+      onChange={(value) => {
+        setSearchValue(value);
+      }}
+    />
+  );
 
-    const baseDropComponentProps: IBaseDropComponentProps = {
-      value: value,
-      onChange: (v) => updateSearchMap(currentField, v as string)
-    };
+  const cacheLabel = currentFieldData?.label ? (
+    <div className="label">{currentFieldData?.label}：</div>
+  ) : null;
 
-    if (currentFilterType === 'Input') {
-      return <DropInput {...baseDropComponentProps} />;
+  const existCache = categoryValue.find((item) => item.field === cacheField);
+
+  const updateInputStringToValue = (labelValue: string) => {
+    if (currentFieldData?.updateInputTextValue) {
+      const value = currentFieldData.updateInputTextValue(labelValue, currentFieldData);
+      changeFieldValue(value);
+      return;
     }
-    if (['DatePicker', 'DateRangerPicker'].includes(currentFilterType)) {
-      return (
-        <DropDatePicker
-          {...baseDropComponentProps}
-          mode={currentFilterType === 'DatePicker' ? 'normal' : 'ranger'}
-        />
-      );
+    if (currentFieldData?.options) {
+      const list = labelValue?.split('|');
+      const value = list.reduce((p, c) => {
+        const option = currentFieldData.options?.find((item) => item.label === c);
+        if (option?.value) {
+          p = [...p, option.value];
+        }
+        return p;
+      }, [] as any);
+      changeFieldValue(value);
+      return;
     }
-    if (currentFieldData?.options?.length) {
-      const checkBoxMode = currentFilterType === 'CheckBox';
-      return (
-        <DropOptions
-          mode={checkBoxMode ? 'checkbox' : 'selectItem'}
-          {...baseDropComponentProps}
-          options={currentFieldData.options}
-        />
-      );
-    }
-    return null;
-  }, [currentFieldData, updateSearchMap, searchMap]);
+    changeFieldValue(labelValue);
+  };
+
+  const fieldInput = (
+    <Input
+      className={'custom-input'}
+      value={inputValue}
+      autoWidth
+      placeholder="请输入选项内容"
+      style={{
+        maxWidth: 350
+      }}
+      onKeyDown={(e) => {
+        if (e.code === 'Backspace' && !inputValue) {
+          const lastestField = categoryValue[categoryValue.length - 1].field;
+          removeTag(lastestField);
+        }
+      }}
+      onChange={(value) => {
+        setInputValue(value);
+      }}
+      onPressEnter={() => {
+        updateInputStringToValue(inputValue as string);
+        setInputValue('');
+      }}
+    />
+  );
+
+  const tagList = useMemo(
+    () =>
+      categoryValue.map((item) => {
+        const isEdit = cacheField === item.field;
+        const matchData = data?.find((dataItem) => dataItem.field === item.field);
+        return isEdit ? (
+          <div key={item.field}>
+            <span className="label">{matchData?.label}：</span>
+            {fieldInput}
+          </div>
+        ) : (
+          <div key={item.field}>
+            {renderTags({
+              value: item,
+              values: categoryValue,
+              data: matchData,
+              removeTag,
+              clickTag: () => {
+                setCacheField(item.field);
+                const editValue = getCurrentFieldEditText(item, matchData);
+                setInputValue(editValue);
+              }
+            })}
+          </div>
+        );
+      }),
+    [categoryValue, data, setCacheField, cacheField, fieldInput, setInputValue, removeTag]
+  );
 
   return (
-    <Dropdown trigger={'click'} droplist={fieldCacheKey ? CurrentFieldPanel : FieldOptions}>
-      <InputTag
-        {...resetInputTagProps}
-        value={tagValues}
-        onBlur={() => clearFieldCacheKey()}
-        onClear={() => clearFieldCacheKey()}
-        onRemove={(v, _index, e) => {
-          updateSearchMap(v.value.field);
-          e.stopPropagation();
+    <Dropdown
+      trigger={'click'}
+      triggerProps={{
+        clickToClose: false,
+        className: dropClassName
+      }}
+      droplist={dropList}
+    >
+      <Space
+        className={`wrapper ${className}`}
+        style={{
+          width: '100%',
+          minWidth: 800,
+          border: '1px solid rgb(22,93,255)',
+          padding: '8px 12px 0 6px',
+          position: 'relative',
+          ...style
         }}
-      />
+        wrap
+      >
+        <IconCloseCircle
+          style={{
+            position: 'absolute',
+            top: '50%',
+            right: 6,
+            transform: 'translateY(-50%)',
+            cursor: 'pointer'
+          }}
+          onClick={() => {
+            setCategoryValue([]);
+            onChange?.({}, [], {});
+          }}
+        />
+        {tagList}
+        {existCache ? null : cacheLabel}
+        {cacheField && !existCache ? fieldInput : null}
+        {!cacheField ? fieldSearchInput : null}
+      </Space>
     </Dropdown>
   );
 };
